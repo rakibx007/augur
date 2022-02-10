@@ -89,6 +89,7 @@ packaging==20.9
 pandas==1.1.3
 parso==0.8.2
 partd==1.2.0
+pathos==0.2.8
 pexpect==4.8.0
 pickleshare==0.7.5
 Pillow==8.2.0
