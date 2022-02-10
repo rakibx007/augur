@@ -677,7 +677,7 @@ class ContributorInterfaceable(WorkerGitInterfaceable):
         #Use a number of processes to get commit data with parallelism.
         commitProcessPool = Pool(processes)
         
-        commitProcessPool.amap(process_commit_metadata, new_contribs)
+        commitProcessPool.amap(self.process_commit_metadata, new_contribs)
 
         #self.logger.info("DEBUG: Got through the new_contribs")
 
