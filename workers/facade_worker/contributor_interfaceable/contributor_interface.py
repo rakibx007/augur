@@ -677,8 +677,10 @@ class ContributorInterfaceable(WorkerGitInterfaceable):
         #Use a number of processes to get commit data with parallelism.
         commitProcessPool = Pool(processes)
         
-        commitProcessPool.amap(self.process_commit_metadata, new_contribs)
+        status = commitProcessPool.amap(self.process_commit_metadata, new_contribs)
 
+        #Wait for all processes to complete all tasks.
+        status.get()
         #self.logger.info("DEBUG: Got through the new_contribs")
 
         # sql query used to find corresponding cntrb_id's of emails found in the contributor's table
