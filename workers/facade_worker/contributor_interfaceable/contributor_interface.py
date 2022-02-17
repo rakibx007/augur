@@ -640,6 +640,8 @@ class ProcessForkData(ContributorInterfaceable):
         self.augur_config = AugurConfig(self._root_augur_dir)
         self.finishing_task = False
         
+        self.config = {}
+        
         self.config.update({
             'gh_api_key': self.augur_config.get_value('Database', 'key'),
             'gitlab_api_key': self.augur_config.get_value('Database', 'gitlab_api_key')
