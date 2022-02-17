@@ -499,10 +499,9 @@ class ContributorInterfaceable(WorkerGitInterfaceable):
         commitProcessPool = Pool(processes)
         
         #Load the initial fork() state that will be copied to worker threads.
-        forkData = ProcessForkData()
+        forkData = ProcessForkData(self.logger)
         
         forkData.db = self.db
-        forkData.logger = self.logger
         forkData.repo_id = repo_id
         
         #commitData['db_str'] = 'postgresql://{}:{}@{}:{}/{}'.format(
@@ -621,7 +620,10 @@ class ContributorInterfaceable(WorkerGitInterfaceable):
         
 #Define the methods and attributes initially availible after process fork().
 class ProcessForkData(ContributorInterfaceable):
-    def __init__(self):
+    def __init__(self,logger):
+        
+        self.logger = logger
+        
         self.data_tables = ['contributors', 'pull_requests', 'commits',
                             'pull_request_assignees', 'pull_request_events', 'pull_request_labels',
                             'pull_request_message_ref', 'pull_request_meta', 'pull_request_repo',
