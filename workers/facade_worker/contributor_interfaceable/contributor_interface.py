@@ -680,7 +680,8 @@ class ContributorInterfaceable(WorkerGitInterfaceable):
         status = commitProcessPool.amap(self.process_commit_metadata, new_contribs)
 
         #Wait for all processes to complete all tasks.
-        status.get()
+        while not status.ready():
+            time.sleep(5)
         #self.logger.info("DEBUG: Got through the new_contribs")
 
         # sql query used to find corresponding cntrb_id's of emails found in the contributor's table
