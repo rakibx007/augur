@@ -175,7 +175,7 @@ class Housekeeper:
             if 'repo_group_id' in job or 'repo_ids' in job:
                 # If RG id is 0 then it just means to query all repos
                 where_and = 'AND' if job['model'] == 'issues' and 'repo_group_id' in job else 'WHERE'
-                where_condition = '{} repo_group_id in {}'.format(where_and, job['repo_group_id']
+                where_condition = '{} repo_group_id = {}'.format(where_and, job['repo_group_id']
                     ) if 'repo_group_id' in job and job['repo_group_id'] != 0 else '{} repo.repo_id IN ({})'.format(
                     where_and, ",".join(str(id) for id in job['repo_ids'])) if 'repo_ids' in job else ''
                 repo_url_sql = s.sql.text("""
