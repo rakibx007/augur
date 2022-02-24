@@ -655,7 +655,10 @@ class ProcessForkData(ContributorInterfaceable):
         if 'gh_api_key' in self.config or 'gitlab_api_key' in self.config:
             try:
                 self.init_oauths(self.platform)
-            except AttributeError:
+            except AttributeError as e:
+                self.logger.info(
+                ''.join(traceback.format_exception(None, e, e.__traceback__)))
+                
                 self.logger.error("Worker not configured to use API key!")
         else:
             self.oauths = [{'oauth_id': 0}]
