@@ -651,18 +651,7 @@ class ProcessForkData(ContributorInterfaceable):
             # 'port': self.augur_config.get_value('Workers', 'contributor_interface')
         })
         
-        #initialize oauths for process
-        self.logger.info("Initializing API key.")
-        if 'gh_api_key' in self.config or 'gitlab_api_key' in self.config:
-            try:
-                self.init_oauths(self.platform)
-            except AttributeError as e:
-                self.logger.info(
-                ''.join(traceback.format_exception(None, e, e.__traceback__)))
-                
-                self.logger.error("Worker not configured to use API key!")
-        else:
-            self.oauths = [{'oauth_id': 0}]
+        self.initialize_database_connections()
             
         # set up the max amount of requests this interface is allowed to make before sleeping for 2 minutes
         self.special_rate_limit = 10
