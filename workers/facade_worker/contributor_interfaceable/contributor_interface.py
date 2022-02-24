@@ -513,6 +513,7 @@ class ContributorInterfaceable(WorkerGitInterfaceable):
 
         #Wait for all processes to complete all tasks.
         while not status.ready():
+            self.logger.info("Waiting for subprocesses...")
             time.sleep(5)
         #self.logger.info("DEBUG: Got through the new_contribs")
 
