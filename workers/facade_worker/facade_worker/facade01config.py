@@ -167,6 +167,9 @@ class Config:
 
 ## TODO: Does this need a block for if the database connection IS multithreaded? I think so, @sgoggins
 
+## Threaded connection pool notes
+# https://stackoverflow.com/questions/48532301/python-postgres-psycopg2-threadedconnectionpool-exhausted
+
         if people and not multi_threaded_connection:
             self.cursor_people = cursor
             self.db_people = db
