@@ -501,7 +501,7 @@ class ContributorInterfaceable(WorkerGitInterfaceable):
         #Load the initial fork() state that will be copied to worker threads.
         forkData = ProcessForkData(self.logger,self.config)
         
-        forkData.db = self.db
+        #forkData.db = self.db
         forkData.repo_id = repo_id
         
         #commitData['db_str'] = 'postgresql://{}:{}@{}:{}/{}'.format(
@@ -621,12 +621,11 @@ class ContributorInterfaceable(WorkerGitInterfaceable):
         
 #Define the methods and attributes initially availible after process fork().
 class ProcessForkData(ContributorInterfaceable):
-    def __init__(self,logger, config):
+    def __init__(self,logger, config={}):
         
         self.logger = logger
-        
-        self.logger.info(f"Here is the config passed to subprocess: {config}")
         self.config = config
+        self.logger.info(f"Here is the config passed to subprocess: {self.config}")
         
         self.data_tables = ['contributors', 'pull_requests', 'commits',
                             'pull_request_assignees', 'pull_request_events', 'pull_request_labels',
@@ -646,7 +645,6 @@ class ProcessForkData(ContributorInterfaceable):
         self.augur_config = AugurConfig(self._root_augur_dir)
         self.finishing_task = False
         
-        self.config = {}
         
         self.config.update({
             'gh_api_key': self.augur_config.get_value('Database', 'key'),
