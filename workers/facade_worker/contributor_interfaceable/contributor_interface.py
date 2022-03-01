@@ -621,9 +621,11 @@ class ContributorInterfaceable(WorkerGitInterfaceable):
         
 #Define the methods and attributes initially availible after process fork().
 class ProcessForkData(ContributorInterfaceable):
-    def __init__(self,logger, config={}):
+    def __init__(self,logger, config):
         
         self.logger = logger
+        
+        self.logger.info(f"Here is the config passed to subprocess: {config}")
         self.config = config
         
         self.data_tables = ['contributors', 'pull_requests', 'commits',
