@@ -7,7 +7,7 @@ from workers.util import read_config
 from psycopg2.errors import UniqueViolation
 from random import randint
 import json
-from pathos.multiprocessing import ProcessingPool as Pool
+import multiprocessing
 
 # Debugger
 import traceback
@@ -508,13 +508,10 @@ class ContributorInterfaceable(WorkerGitInterfaceable):
         #    self.config['user_database'], self.config['password_database'], self.config['host_database'], self.config['port_database'], self.config['name_database']
         #)
         
+        self.logger.info(f"Splitting into subprocesses.")
         
-        status = commitProcessPool.amap(forkData.process_commit_metadata, new_contribs)
-
-        #Wait for all processes to complete all tasks.
-        while not status.ready():
-            self.logger.info("Waiting for subprocesses...")
-            time.sleep(5)
+        with commitProcessPool as pool:
+            pool.map(forkData.process_commit_metadata, new_contribs)
         #self.logger.info("DEBUG: Got through the new_contribs")
 
         # sql query used to find corresponding cntrb_id's of emails found in the contributor's table
@@ -620,9 +617,12 @@ class ContributorInterfaceable(WorkerGitInterfaceable):
         
         
 #Define the methods and attributes initially availible after process fork().
-class ProcessForkData(ContributorInterfaceable):
-    def __init__(self,logger, config={}):
+class ProcessForkData(multiprocessing.Process):
+    def __init__(self,id,logger,db, config={}):
         
+        super(Process,self).__init__()
+        
+        self.db = db
         self.logger = logger
         self.config = config
         self.logger.info(f"Here is the config passed to subprocess: {self.config}")
@@ -652,7 +652,7 @@ class ProcessForkData(ContributorInterfaceable):
             # 'port': self.augur_config.get_value('Workers', 'contributor_interface')
         })
         
-        self.initialize_database_connections()
+        #self.initialize_database_connections()
             
         # set up the max amount of requests this interface is allowed to make before sleeping for 2 minutes
         self.special_rate_limit = 10
@@ -662,6 +662,25 @@ class ProcessForkData(ContributorInterfaceable):
         self.pk_source_prs = []
 
 
+    def get_login_with_commit_hash(self, commit_data, repo_id):
+
+        # Get endpoint for login from hash
+        url = self.create_endpoint_from_commit_sha(
+            commit_data['hash'], repo_id)
+
+        # Send api request
+        login_json = self.request_dict_from_endpoint(url)
+
+        if login_json is None or 'sha' not in login_json:
+            self.logger.info("Search query returned empty data. Moving on")
+            return None
+
+        try:
+            match = login_json['author']['login']
+        except:
+            match = None
+
+        return match
     
     
     def process_commit_metadata(self,contributor):
